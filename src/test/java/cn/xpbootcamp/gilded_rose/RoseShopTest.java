@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RoseShopTest {
     private static final int LEGEND_EXPIRATION_DAY = 10000;
+    private static final double BACKSTAGE_PASS_CHANGE_RATE = 0.99999;
 
     @Test
     void should_throw_if_quality_is_smaller_than_0() {
@@ -142,6 +143,55 @@ public class RoseShopTest {
     @Test
     void should_throw_if_change_rate_larger_than_1_for_legends() {
         assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", LEGEND_EXPIRATION_DAY, 15.0, 1.1, ProductType.LEGEND));
+    }
+
+    @Test
+    void should_increase_2_for_quality_when_special_product_backstagePass_expire_before_10_days() {
+        Product backstagePass = new Product("BackstagePass", 10, 40.0, BACKSTAGE_PASS_CHANGE_RATE, ProductType.SPECIAL);
+        RoseShop roseShop = new RoseShop();
+        roseShop.addProduct(backstagePass);
+
+        roseShop.productExpireDays(backstagePass, 1);
+        Double agedBrieQualityAfterOneDay = roseShop.getValues().get("BackstagePass");
+        assertEquals(Double.valueOf(42), agedBrieQualityAfterOneDay);
+
+        roseShop.productExpireDays(backstagePass, 1);
+        Double agedBrieQualityAfterTwoDay = roseShop.getValues().get("BackstagePass");
+        assertEquals(Double.valueOf(44), agedBrieQualityAfterTwoDay);
+    }
+
+    @Test
+    void should_increase_3_for_quality_when_special_product_backstagePass_expire_between_5_and_10_days() {
+        Product backstagePass = new Product("BackstagePass", 12, 40.0, BACKSTAGE_PASS_CHANGE_RATE, ProductType.SPECIAL);
+        RoseShop roseShop = new RoseShop();
+        roseShop.addProduct(backstagePass);
+
+        roseShop.productExpireDays(backstagePass, 3);
+        Double agedBrieQualityAfterThreeDay = roseShop.getValues().get("BackstagePass");
+        assertEquals(Double.valueOf(42), agedBrieQualityAfterThreeDay);
+
+        roseShop.productExpireDays(backstagePass, 8);
+        Double agedBrieQualityAfterEightDay = roseShop.getValues().get("BackstagePass");
+        assertEquals(Double.valueOf(62), agedBrieQualityAfterEightDay);
+    }
+
+    @Test
+    void should_be_0_for_quality_when_special_product_backstagePass_expire_exceed_sellIn_days() {
+        Product backstagePass = new Product("BackstagePass", 13, 40.0, BACKSTAGE_PASS_CHANGE_RATE, ProductType.SPECIAL);
+        RoseShop roseShop = new RoseShop();
+        roseShop.addProduct(backstagePass);
+
+        roseShop.productExpireDays(backstagePass, 9);
+        Double agedBrieQualityAfterNineDay = roseShop.getValues().get("BackstagePass");
+        assertEquals(Double.valueOf(53), agedBrieQualityAfterNineDay);
+
+        roseShop.productExpireDays(backstagePass, 4);
+        Double agedBrieQualityAfterFourDay = roseShop.getValues().get("BackstagePass");
+        assertEquals(Double.valueOf(65), agedBrieQualityAfterFourDay);
+
+        roseShop.productExpireDays(backstagePass, 1);
+        Double agedBrieQualityAfterOneDay = roseShop.getValues().get("BackstagePass");
+        assertEquals(Double.valueOf(0), agedBrieQualityAfterOneDay);
     }
 
 }

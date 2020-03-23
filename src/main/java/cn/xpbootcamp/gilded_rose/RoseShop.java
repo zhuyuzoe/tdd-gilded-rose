@@ -36,14 +36,18 @@ public class RoseShop {
     }
 
     private void updateValueOfProductWithExpirationDays(Integer day, String name, Integer sellIn, Double changeRate, Double quality, ProductType productType) {
-        if (productType == ProductType.NORMAL)  {
+        if (productType == ProductType.NORMAL) {
             if (sellIn - day >= 0) {
                 values.put(name, getNormalQualityBeforeExpired(day, changeRate, quality));
             } else {
                 values.put(name, getNormalQualityAfterExpired(day, sellIn, changeRate, quality));
             }
         } else if (productType == ProductType.SPECIAL) {
-            values.put(name, getSpecialQuality(day, changeRate, quality));
+            if (name == "BackstagePass") {
+                values.put(name, getPassQuality(day, sellIn, quality));
+            } else {
+                values.put(name, getSpecialQuality(day, changeRate, quality));
+            }
         }
 
     }
@@ -66,6 +70,28 @@ public class RoseShop {
             return 50;
         } else {
             return updatedQuality;
+        }
+    }
+
+    private double getPassQuality(Integer day, Integer sellIn, Double quality) {
+        if (sellIn - day >= 10) {
+            return quality;
+        } else if (sellIn - day >= 5 && sellIn - day < 10) {
+            if (sellIn >= 10) {
+                return quality + 2 * (10 - (sellIn - day));
+            } else {
+                return quality + 2 * day;
+            }
+        } else if (sellIn - day >= 0 && sellIn - day < 5) {
+            if (sellIn >= 10) {
+                return quality + 2 * 5 + 3 * (5 - (sellIn - day));
+            } else if (sellIn < 10 && sellIn >= 5) {
+                return quality + 2 * (sellIn - 5) + 3 * (5 - (sellIn - day));
+            } else {
+                return quality + 3 * day;
+            }
+        } else {
+            return 0;
         }
     }
 
