@@ -9,16 +9,18 @@ import lombok.NoArgsConstructor;
 public class Product {
     private String name;
     private Integer sellIn;
-    private Integer quality;
+    private Double quality;
+    private Double changeRate;
 
-    public Product(String name, Integer sellIn, Integer quality) {
+    public Product(String name, Integer sellIn, Double quality, Double changeRate) {
         this.name = name;
         this.sellIn = sellIn;
         this.quality = quality;
+        this.changeRate = changeRate;
         qualityValidation(quality);
     }
 
-    private void qualityValidation(Integer quality) {
+    private void qualityValidation(Double quality) {
         if (quality < 0 || quality > 50) {
             throw new IllegalArgumentException("quality should between 0 and 50");
         }
