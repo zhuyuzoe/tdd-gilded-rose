@@ -52,6 +52,26 @@ public class RoseShopTest {
     }
 
     @Test
+    void should_smaller_than_50_for_quality_when_product_expire_1000_days() {
+        Product agedBrie = new Product("AgedBrie", 2, 40.0, 0.8, ProductType.SPECIAL);
+        RoseShop roseShop = new RoseShop();
+        roseShop.addProduct(agedBrie);
+
+        roseShop.productExpireDays(agedBrie, 1000);
+        assertTrue(roseShop.getValues().get("AgedBrie") <= 50);
+    }
+
+    @Test
+    void should_smaller_than_50_for_quality_when_product_expire_10_days() {
+        Product agedBrie = new Product("AgedBrie", 2, 40.0, 0.3, ProductType.SPECIAL);
+        RoseShop roseShop = new RoseShop();
+        roseShop.addProduct(agedBrie);
+
+        roseShop.productExpireDays(agedBrie, 10);
+        assertTrue(roseShop.getValues().get("AgedBrie") <= 50);
+    }
+
+    @Test
     void should_increase_for_quality_when_special_product_expire() {
         Product agedBrie = new Product("AgedBrie", 2, 40.0, 0.2, ProductType.SPECIAL);
         RoseShop roseShop = new RoseShop();
@@ -95,4 +115,6 @@ public class RoseShopTest {
     void should_throw_if_change_rate_is_0_for_specials() {
         assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", 20, 70.0, 0.0, ProductType.SPECIAL));
     }
+
+
 }

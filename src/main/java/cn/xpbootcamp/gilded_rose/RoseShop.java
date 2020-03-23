@@ -19,9 +19,10 @@ public class RoseShop {
         Integer sellIn = sellIns.get(name);
         Double changeRate = changeRates.get(name);
         Double quality = values.get(name);
+        ProductType productType = product.getProductType();
 
         updateSellInOfProductWithExpirationDays(day, name, sellIn);
-        updateValueOfProductWithExpirationDays(day, name, sellIn, changeRate, quality);
+        updateValueOfProductWithExpirationDays(day, name, sellIn, changeRate, quality, productType);
     }
 
     public void addProduct(Product product) {
@@ -34,15 +35,20 @@ public class RoseShop {
         sellIns.put(name, sellIn - day);
     }
 
-    private void updateValueOfProductWithExpirationDays(Integer day, String name, Integer sellIn, Double changeRate, Double quality) {
-        if (sellIn - day >= 0) {
-            values.put(name, getQualityBeforeExpired(day, changeRate, quality));
-        } else {
-            values.put(name, getQualityAfterExpired(day, sellIn, changeRate, quality));
+    private void updateValueOfProductWithExpirationDays(Integer day, String name, Integer sellIn, Double changeRate, Double quality, ProductType productType) {
+        if (productType == ProductType.NORMAL)  {
+            if (sellIn - day >= 0) {
+                values.put(name, getNormalQualityBeforeExpired(day, changeRate, quality));
+            } else {
+                values.put(name, getNormalQualityAfterExpired(day, sellIn, changeRate, quality));
+            }
+        } else if (productType == ProductType.SPECIAL) {
+            values.put(name, getSpecialQuality(day, changeRate, quality));
         }
+
     }
 
-    private double getQualityAfterExpired(Integer day, Integer sellIn, Double changeRate, Double quality) {
+    private double getNormalQualityAfterExpired(Integer day, Integer sellIn, Double changeRate, Double quality) {
         if (changeRate > -0.5) {
             return quality * Math.pow(1 + changeRate, sellIn) * Math.pow(1 + 2 * changeRate, day - sellIn);
         } else {
@@ -50,9 +56,17 @@ public class RoseShop {
         }
     }
 
-    private double getQualityBeforeExpired(Integer day, Double changeRate, Double quality) {
+    private double getNormalQualityBeforeExpired(Integer day, Double changeRate, Double quality) {
         return quality * Math.pow(1 + changeRate, day);
     }
 
+    private double getSpecialQuality(Integer day, Double changeRate, Double quality) {
+        double updatedQuality = quality * Math.pow(1 + changeRate, day);
+        if (updatedQuality >= 50) {
+            return 50;
+        } else {
+            return updatedQuality;
+        }
+    }
 
 }
