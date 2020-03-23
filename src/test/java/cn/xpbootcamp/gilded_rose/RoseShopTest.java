@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RoseShopTest {
+    private static final int LEGEND_EXPIRATION_DAY = 10000;
 
     @Test
     void should_throw_if_quality_is_smaller_than_0() {
@@ -30,6 +31,37 @@ public class RoseShopTest {
         assertEquals(Integer.valueOf(-1), roseShop.getSellIns().get("Milk"));
         assertEquals(Double.valueOf(7.84), roseShop.getValues().get("Milk"));
     }
+
+    @Test
+    void should_increase_for_quality_when_special_product_expire() {
+        Product agedBrie = new Product("AgedBrie", 2, 40.0, 0.2, ProductType.SPECIAL);
+        RoseShop roseShop = new RoseShop();
+        roseShop.addProduct(agedBrie);
+
+        roseShop.productExpireDays(agedBrie, 1);
+        Double agedBrieQualityAfterOneDay = roseShop.getValues().get("AgedBrie");
+        assertTrue(agedBrieQualityAfterOneDay >= 40.0);
+
+        roseShop.productExpireDays(agedBrie, 1);
+        Double agedBrieQualityAfterTwoDay = roseShop.getValues().get("AgedBrie");
+        assertTrue(agedBrieQualityAfterTwoDay >= agedBrieQualityAfterOneDay);
+    }
+
+    @Test
+    void should_stay_unchanged_for_quality_when_legend_product_expire() {
+        Product sulfuras = new Product("Sulfuras", LEGEND_EXPIRATION_DAY, 40.0, 1.0, ProductType.LEGEND);
+        RoseShop roseShop = new RoseShop();
+        roseShop.addProduct(sulfuras);
+
+        roseShop.productExpireDays(sulfuras, 1);
+        Double sulfurasQualityAfterOneDay = roseShop.getValues().get("Sulfuras");
+        assertEquals(Double.valueOf(40.0), sulfurasQualityAfterOneDay);
+
+        roseShop.productExpireDays(sulfuras, 1);
+        Double sulfurasQualityAfterTwoDay = roseShop.getValues().get("Sulfuras");
+        assertEquals(sulfurasQualityAfterTwoDay, sulfurasQualityAfterOneDay);
+    }
+
 
     @Test
     void should_larger_than_0_for_quality_when_product_expire_1000_days() {
@@ -71,20 +103,6 @@ public class RoseShopTest {
         assertTrue(roseShop.getValues().get("AgedBrie") <= 50);
     }
 
-    @Test
-    void should_increase_for_quality_when_special_product_expire() {
-        Product agedBrie = new Product("AgedBrie", 2, 40.0, 0.2, ProductType.SPECIAL);
-        RoseShop roseShop = new RoseShop();
-        roseShop.addProduct(agedBrie);
-
-        roseShop.productExpireDays(agedBrie, 1);
-        Double agedBrieQualityAfterOneDay = roseShop.getValues().get("AgedBrie");
-        assertTrue(agedBrieQualityAfterOneDay >= 40.0);
-
-        roseShop.productExpireDays(agedBrie, 1);
-        Double agedBrieQualityAfterTwoDay = roseShop.getValues().get("AgedBrie");
-        assertTrue(agedBrieQualityAfterTwoDay >= agedBrieQualityAfterOneDay);
-    }
 
     @Test
     void should_throw_if_change_rate_smaller_than_neg_1_for_normals() {
@@ -116,5 +134,14 @@ public class RoseShopTest {
         assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", 20, 15.0, 0.0, ProductType.SPECIAL));
     }
 
+    @Test
+    void should_throw_if_change_rate_is_08_for_legends() {
+        assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", LEGEND_EXPIRATION_DAY, 15.0, 0.8, ProductType.LEGEND));
+    }
+
+    @Test
+    void should_throw_if_change_rate_larger_than_1_for_legends() {
+        assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", LEGEND_EXPIRATION_DAY, 15.0, 1.1, ProductType.LEGEND));
+    }
 
 }

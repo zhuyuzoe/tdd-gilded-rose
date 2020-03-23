@@ -30,6 +30,9 @@ public class Product {
         if (productType == ProductType.SPECIAL && (changeRate <= 0 || changeRate >= 1) ) {
             throw new IllegalArgumentException("change rate should between 0 and 1 for specials");
         }
+        if (productType == ProductType.LEGEND && changeRate != 1 ) {
+            throw new IllegalArgumentException("change rate should be 1 for legends");
+        }
     }
 
     private void qualityValidation(Double quality) {
