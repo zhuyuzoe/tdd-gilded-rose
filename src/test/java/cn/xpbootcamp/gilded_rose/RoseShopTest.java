@@ -88,32 +88,32 @@ public class RoseShopTest {
 
     @Test
     void should_throw_if_change_rate_smaller_than_neg_1_for_normals() {
-        assertThrows(IllegalArgumentException.class, () -> new Product("Milk", 20, 70.0, -1.3, ProductType.NORMAL));
+        assertThrows(IllegalArgumentException.class, () -> new Product("Milk", 20, 15.0, -1.3, ProductType.NORMAL));
     }
 
     @Test
     void should_throw_if_change_rate_larger_than_0_for_normals() {
-        assertThrows(IllegalArgumentException.class, () -> new Product("Milk", 20, 70.0, 0.3, ProductType.NORMAL));
+        assertThrows(IllegalArgumentException.class, () -> new Product("Milk", 20, 15.0, 0.3, ProductType.NORMAL));
     }
 
     @Test
     void should_throw_if_change_rate_is_0_for_normals() {
-        assertThrows(IllegalArgumentException.class, () -> new Product("Milk", 20, 70.0, 0.0, ProductType.NORMAL));
+        assertThrows(IllegalArgumentException.class, () -> new Product("Milk", 20, 15.0, 0.0, ProductType.NORMAL));
     }
 
     @Test
     void should_throw_if_change_rate_smaller_than_0_for_specials() {
-        assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", 20, 70.0, -0.3, ProductType.SPECIAL));
+        assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", 20, 15.0, -0.3, ProductType.SPECIAL));
     }
 
     @Test
     void should_throw_if_change_rate_larger_than_1_for_specials() {
-        assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", 20, 70.0, 1.3, ProductType.SPECIAL));
+        assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", 20, 15.0, 1.3, ProductType.SPECIAL));
     }
 
     @Test
     void should_throw_if_change_rate_is_0_for_specials() {
-        assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", 20, 70.0, 0.0, ProductType.SPECIAL));
+        assertThrows(IllegalArgumentException.class, () -> new Product("AgedBrie", 20, 15.0, 0.0, ProductType.SPECIAL));
     }
 
 
